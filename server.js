@@ -7,32 +7,8 @@ const cookieParser = require('cookie-parser'); // For reading JWT from cookie
 
 const app = express();
 
-// --- CORS Configuration ---
-const clientURL = process.env.CLIENT_URL;
-console.log(`[CORS Setup] Allowed Client URL from env: ${clientURL}. NODE_ENV: ${process.env.NODE_ENV}`);
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    console.log(`[CORS Check] Request from origin: ${origin}. Allowed clientURL: ${clientURL}`);
-    if (origin === clientURL) {
-      callback(null, true);
-    } else if (!origin && process.env.NODE_ENV !== 'production') {
-      console.log(`[CORS Check] No origin, non-production. Allowing.`);
-      callback(null, true);
-    } else if (!origin && process.env.NODE_ENV === 'production') {
-      console.log(`[CORS Check] No origin, production env (possibly health check). Allowing.`);
-      callback(null, true);
-    } else {
-      console.error(`[CORS Error] Origin '${origin}' not allowed.`);
-      callback(new Error(`Origin '${origin}' not allowed by CORS policy.`));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 // --- Body Parsers ---
 app.use(express.json({ limit: '10kb' }));
